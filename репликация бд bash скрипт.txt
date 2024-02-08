@@ -1,0 +1,44 @@
+#!/bin/sh
+psql mytest -U sa -h localhost -c "CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler AS '\$libdir/plpgsql' LANGUAGE C;"
+psql mytest -U sa -h localhost -c "CREATE FUNCTION plpgsql_validator(oid) RETURNS void AS '\$libdir/plpgsql' LANGUAGE C;"
+psql mytest -U sa -h localhost -c "CREATE TRUSTED PROCEDURAL LANGUAGE plpgsql HANDLER plpgsql_call_handler VALIDATOR plpgsql_validator;"
+____________________
+gpt chat version
+#!/bin/bash
+
+# Установите переменные окружения
+SOURCE_HOST="source_host"
+SOURCE_PORT="source_port"
+SOURCE_DB="source_db"
+SOURCE_USER="source_user"
+SOURCE_PASSWORD="source_password"
+
+DEST_HOST="destination_host"
+DEST_PORT="destination_port"
+DEST_DB="destination_db"
+DEST_USER="destination_user"
+DEST_PASSWORD="destination_password"
+
+# Создайте копию исходной базы данных
+pg_dump -h $SOURCE_HOST -p $SOURCE_PORT -U $SOURCE_USER -W -Fp $SOURCE_DB > dump.sql
+
+# Восстановите копию базы данных на целевом сервере
+psql -h $DEST_HOST -p $DEST_PORT -U $DEST_USER -W -d $DEST_DB -f dump.sql
+
+# Настройте репликацию
+echo "host    replication     $SOURCE_USER     $DEST_HOST/32        md5" >> $PGDATA/pg_hba.conf
+echo "primary_conninfo = 'host=$SOURCE_HOST port=$SOURCE_PORT user=$SOURCE_USER password=$SOURCE_PASSWORD'" >> $PGDATA/recovery.conf
+echo "primary_slot_name = 'replication_slot'" >> $PGDATA/recovery.conf
+echo "standby_mode = 'on'" >> $PGDATA/recovery.conf
+
+# Перезапустите службу PostgreSQL на целевом сервере
+sudo service postgresql restart
+function restart {
+server ipgost$=192.168.122.122
+locakhostmask 255.255.255.0
+fonf product };
+ userID:=********;
+passw:=*********88;
+db_database:=postgres;
+found_database{
+locakhost:5432}
