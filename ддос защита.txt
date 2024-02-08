@@ -1,0 +1,16 @@
+user@srv:~$ nano /home/script/ddos.sh
+#!/bin/sh
+# Задаем путь к скриптам
+mypath=/home/script
+
+# Определяем все соединения на порт 443 и записываем лог find.log
+netstat -ntu | grep ":443\ " | awk '{print $5}'| cut -d: -f1 | sort | uniq -c | sort -nr | grep -v "127.0.0.1" | grep -v "8.8.8.8" > $mypath/find.log
+
+# Создаем DROP правила iptables, блокировать IP если количество коннектов 50 и больше. И сохраняем правила в bash-скрипт ban_ip.sh
+awk '{if ($1 > 50) {print "/sbin/iptables -A INPUT -p tcp --dport 443 -s " $2 " -j DROP";}}' $mypath/ddos.iplist >> $mypath/ban_ip.sh
+
+# Запускаем только что созданный скрипт блокировки IP атакующих
+/bin/bash $mypath/ban_ip.sh
+
+# Очищаем скрипт ban_ip.sh
+cat /dev/null > $mypath/ban_ip.sh
